@@ -303,6 +303,12 @@ def main():
             value=2_151_000, step=1_000, format="%d",
         )
         st.markdown("---")
+        st.markdown("**🍽️ Món bắt buộc:**")
+        mon_bb_1 = st.text_input("Món bắt buộc 1 (để trống nếu không)", "")
+        mon_bb_2 = st.text_input("Món bắt buộc 2 (để trống nếu không)", "")
+        forced_items = [m.strip().upper() for m in [mon_bb_1, mon_bb_2] if m.strip()]
+
+        st.markdown("---")
         mode = st.selectbox(
             "📋 Chế độ hóa đơn",
             ["🍺🥘 Bia + Đồ ăn (mặc định)", "🍺 Chỉ bia", "🔧 Tùy chỉnh hoàn toàn"],
@@ -343,12 +349,6 @@ def main():
                 "beer_no_div5": beer_no_div5,
                 "forced_items": forced_items,
             }
-
-        st.markdown("---")
-        st.markdown("**🍽️ Món bắt buộc:**")
-        mon_bb_1 = st.text_input("Món bắt buộc 1 (để trống nếu không)", "")
-        mon_bb_2 = st.text_input("Món bắt buộc 2 (để trống nếu không)", "")
-        forced_items = [m.strip().upper() for m in [mon_bb_1, mon_bb_2] if m.strip()]
 
         st.markdown("---")
         st.markdown("""**Ràng buộc:**
