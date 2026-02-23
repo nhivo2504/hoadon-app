@@ -145,6 +145,12 @@ def solve(df, target, cfg):
                 model.add(sum(starter_used) == 0)
                 model.add(sum(main_used) == 0)
 
+            # Ràng buộc món bắt buộc
+            for fname in cfg.get("forced_items", []):
+                fidx = idx_of(fname)
+                if fidx:
+                    model.add(qty[fidx[0]] >= 1)
+
             allowed = (
                 [bidx[0] for bidx in beer_idx.values() if bidx]
                 + soft_idx + khan_idx + btm_idx + starter_idx + main_idx
@@ -307,12 +313,14 @@ def main():
                 "beer_min": 0.90, "beer_max": 0.98, "ken330_min": 0.70,
                 "ken330_fixed_qty": None, "soft_max": 0.10,
                 "require_food": False, "beer_no_div5": True,
+                "forced_items": forced_items,
             }
         elif mode == "🍺🥘 Bia + Đồ ăn (mặc định)":
             cfg = {
                 "beer_min": 0.60, "beer_max": 0.89, "ken330_min": 0.80,
                 "ken330_fixed_qty": None, "soft_max": 0.07,
                 "require_food": True, "beer_no_div5": True,
+                "forced_items": forced_items,
             }
         else:
             st.markdown("**🔧 Tùy chỉnh chi tiết:**")
@@ -333,7 +341,14 @@ def main():
                 "ken330_fixed_qty": ken330_qty if ken_mode == "Cố định số lượng" else None,
                 "soft_max": soft_max, "require_food": require_food,
                 "beer_no_div5": beer_no_div5,
+                "forced_items": forced_items,
             }
+
+        st.markdown("---")
+        st.markdown("**🍽️ Món bắt buộc:**")
+        mon_bb_1 = st.text_input("Món bắt buộc 1 (để trống nếu không)", "")
+        mon_bb_2 = st.text_input("Món bắt buộc 2 (để trống nếu không)", "")
+        forced_items = [m.strip().upper() for m in [mon_bb_1, mon_bb_2] if m.strip()]
 
         st.markdown("---")
         st.markdown("""**Ràng buộc:**
