@@ -344,18 +344,25 @@ def main():
 - 🥘 Bánh tráng mè: 1–2% tổng
 - 🥗 2–3 Khai vị, 2–3 Món chính""")
 
-    if uploaded is None:
-        st.info("👈 Vui lòng upload file Menu CSV ở thanh bên trái để bắt đầu.")
-        return
-
-    try:
-        df_menu = pd.read_csv(uploaded, sep=";", encoding="utf-8-sig")
-        df_menu.columns = [c.strip() for c in df_menu.columns]
-        if not {"Tên sản phẩm", "Giá bán", "Danh mục sản phẩm"}.issubset(df_menu.columns):
-            st.error("File CSV thiếu cột bắt buộc.")
+    import os
+    if uploaded is not None:
+        try:
+            df_menu = pd.read_csv(uploaded, sep=";", encoding="utf-8-sig")
+            df_menu.columns = [c.strip() for c in df_menu.columns]
+        except Exception as e:
+            st.error(f"Lỗi đọc file: {e}")
             return
-    except Exception as e:
-        st.error(f"Lỗi đọc file: {e}")
+    else:
+        default_path = os.path.join(os.path.dirname(__file__), "menu_default.csv")
+        if os.path.exists(default_path):
+            df_menu = pd.read_csv(default_path, sep=";", encoding="utf-8-sig")
+            df_menu.columns = [c.strip() for c in df_menu.columns]
+            st.info("📋 Đang dùng menu mặc định. Upload CSV mới để thay đổi.")
+        else:
+            st.info("👈 Vui lòng upload file Menu CSV ở thanh bên trái để bắt đầu.")
+            return
+    if not {"Tên sản phẩm", "Giá bán", "Danh mục sản phẩm"}.issubset(df_menu.columns):
+        st.error("File CSV thiếu cột bắt buộc.")
         return
 
     with st.expander("📋 Xem Menu đã tải lên", expanded=False):
