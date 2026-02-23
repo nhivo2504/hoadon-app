@@ -31,14 +31,16 @@ def solve(df, target, cfg):
     df["Tên sản phẩm"]      = df["Tên sản phẩm"].str.upper().str.strip()
     df["Danh mục sản phẩm"] = df["Danh mục sản phẩm"].str.upper().str.strip()
     df["eff_price"] = df.apply(effective_price, axis=1)
-
+    df["is_kg"] = df["Đơn vị tính"].str.strip() == "Kg"
+    df["solver_price"] = df["eff_price"].copy()
+    df.loc[df["is_kg"], "solver_price"] = (df.loc[df["is_kg"], "eff_price"] / 100).round().astype(int)
     relevant_cats = [BEER_CATEGORY, STARTER_CATEGORY] + MAIN_CATEGORIES + [
         "THỰC ĐƠN CƠM", "CÁ", "LẨU", "LƯƠN", "MỰC", "ẾCH", "BỒ CÂU", "CHÁO", "CƠM"
     ]
     df      = df[df["Danh mục sản phẩm"].isin(relevant_cats)].reset_index(drop=True)
     n_items = len(df)
-    prices  = df["eff_price"].tolist()
-    target_k = target
+    prices   = df["solver_price"].tolist()   # ← dùng solver_price thay eff_price
+    target_k = target                  # ← nhân 100 để khớp với món Kg
 
     N_lo         = math.ceil(target / 700_000)
     N_hi         = math.floor(target / 400_000)
@@ -177,31 +179,39 @@ def solve(df, target, cfg):
 
     rows = []
     for i in range(n_items):
-        q = best_sol[i]
-        if q == 0:
+        q_raw = best_sol[i]
+        if q_raw == 0:
             continue
-        name    = df.loc[i, "Tên sản phẩm"]
-        cat     = df.loc[i, "Danh mục sản phẩm"]
-        price_raw = int(df.loc[i, "Giá bán"])   # giá gốc để hiển thị
-        cat = df.loc[i, "Danh mục sản phẩm"]
-        name = df.loc[i, "Tên sản phẩm"]
+        name      = df.loc[i, "Tên sản phẩm"]
+        cat       = df.loc[i, "Danh mục sản phẩm"]
+        is_kg     = df.loc[i, "is_kg"]
+        price_raw = int(df.loc[i, "Giá bán"])
+
+        # ← THÊM MỚI: nếu món Kg thì qty thực = q_raw / 100
+        q_display = round(q_raw / 100, 2) if is_kg else q_raw
+
         if cat.upper() == BEER_CATEGORY or name in [s.upper() for s in SOFT_DRINK_NAMES]:
             price = price_raw
         else:
-            price = round(price_raw * TAX_FOOD)  # chỉ để hiển thị
-        total_i = q * price
+            price = round(price_raw * TAX_FOOD)
+
+        total_i = round(q_display * price)  # ← dùng q_display để tính tiền
+
         tax_label = "Giữ nguyên" if (
             cat.upper() == BEER_CATEGORY or name in [s.upper() for s in SOFT_DRINK_NAMES]
         ) else "−0.6%"
+
         rows.append({
             "Tên món":          name.title(),
             "Phân loại":        cat.title(),
-            "Số lượng":         q,
+            "Đơn vị tính":      str(df.loc[i, "Đơn vị tính"]) if "Đơn vị tính" in df.columns else "",
+            "Số lượng":         q_display,   # ← hiển thị 1.50 thay vì 150
             "Đơn giá (VNĐ)":   f"{price:,}",
             "Thuế":             tax_label,
             "Thành tiền (VNĐ)": f"{total_i:,}",
             "_total_raw":       total_i,
         })
+
 
     result_df   = pd.DataFrame(rows)
     grand_total = int(result_df["_total_raw"].sum())
