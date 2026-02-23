@@ -297,11 +297,15 @@ def main():
     with st.sidebar:
         st.header("⚙️ Cấu hình Hóa Đơn")
         uploaded = st.file_uploader("📂 Upload file Menu CSV", type=["csv"])
-        target   = st.number_input(
-            "💰 Target_Total (VNĐ)",
+        st.markdown("### 💰 Nhập Giá Trị Hóa Đơn Mong Muốn (VNĐ)")
+        target = st.number_input(
+            "",
             min_value=100_000, max_value=50_000_000,
-            value=2_151_000, step=1_000, format="%d",
+            value=None, step=1_000, format="%d",
+            placeholder="Ví dụ: 2,151,000",
         )
+        if target is None:
+            target = 2_151_000
         st.markdown("---")
         st.markdown("**🍽️ Món bắt buộc:**")
         MON_LIST = [
@@ -377,7 +381,13 @@ def main():
         if os.path.exists(default_path):
             df_menu = pd.read_csv(default_path, sep=";", encoding="utf-8-sig")
             df_menu.columns = [c.strip() for c in df_menu.columns]
-            st.info("📋 Đang dùng menu mặc định. Upload CSV mới để thay đổi.")
+            name_file = os.path.join(os.path.dirname(__file__), "menu_default_name.txt")
+            if os.path.exists(name_file):
+                with open(name_file, "r", encoding="utf-8") as nf:
+                    menu_filename = nf.read().strip()
+            else:
+                menu_filename = "menu_default.csv"
+            st.info(f"📋 Đang dùng menu mặc định: **{menu_filename}**. Upload CSV mới để thay đổi.")
         else:
             st.info("👈 Vui lòng upload file Menu CSV ở thanh bên trái để bắt đầu.")
             return
