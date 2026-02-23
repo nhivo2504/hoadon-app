@@ -304,9 +304,14 @@ def main():
         )
         st.markdown("---")
         st.markdown("**🍽️ Món bắt buộc:**")
-        mon_bb_1 = st.text_input("Món bắt buộc 1 (để trống nếu không)", "")
-        mon_bb_2 = st.text_input("Món bắt buộc 2 (để trống nếu không)", "")
-        forced_items = [m.strip().upper() for m in [mon_bb_1, mon_bb_2] if m.strip()]
+        MON_LIST = [
+            "", "BIVINA EXPORT LON", "KEN BẠC LON 250ML", "KEN BẠC LON 330ML",
+            "KEN BẠC CHAI", "TIGER BẠC LON", "TIGER BẠC LON 250ML", "SÀI GÒN TRẮNG",
+            "NƯỚC NGỌT", "NƯỚC SUỐI", "GÀ TA 2 MÓN", "GÀ KHO SẢ GỪNG", "KHOAI TÂY CHIÊN",
+        ]
+        mon_bb_1 = st.selectbox("Món bắt buộc 1", MON_LIST, index=0)
+        mon_bb_2 = st.selectbox("Món bắt buộc 2", MON_LIST, index=0)
+        forced_items = [m for m in [mon_bb_1, mon_bb_2] if m.strip()]
 
         st.markdown("---")
         mode = st.selectbox(
