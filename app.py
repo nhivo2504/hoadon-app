@@ -33,7 +33,7 @@ def solve(df, target, cfg):
     df["eff_price"] = df.apply(effective_price, axis=1)
     df["is_kg"] = df["Đơn vị tính"].str.strip() == "Kg"
     df["solver_price"] = df["eff_price"].copy()
-    df.loc[df["is_kg"], "solver_price"] = (df.loc[df["is_kg"], "eff_price"] / 100).round().astype(int)
+    df.loc[df["is_kg"], "solver_price"] = (df.loc[df["is_kg"], "eff_price"] / 10).round().astype(int)
     relevant_cats = [BEER_CATEGORY, STARTER_CATEGORY] + MAIN_CATEGORIES + [
         "THỰC ĐƠN CƠM", "CÁ", "LẨU", "LƯƠN", "MỰC", "ẾCH", "BỒ CÂU", "CHÁO", "CƠM"
     ]
@@ -194,7 +194,7 @@ def solve(df, target, cfg):
         price_raw = int(df.loc[i, "Giá bán"])
 
         # ← THÊM MỚI: nếu món Kg thì qty thực = q_raw / 100
-        q_display = round(q_raw / 100, 2) if is_kg else q_raw
+        q_display = round(q_raw / 10, 1) if is_kg else q_raw
 
         if cat.upper() == BEER_CATEGORY or name in [s.upper() for s in SOFT_DRINK_NAMES]:
             price = price_raw
@@ -242,51 +242,78 @@ def render_invoice_table(df_items, show_tax_note=False):
     )
 
     display_rows = []
-    for idx, row in df_items.iterrows():
-        don_gia_raw = int(str(row["Đơn giá (VNĐ)"]).replace(",", ""))
-        so_luong    = int(row["Số lượng"])
+    for stt, (_, row) in enumerate(df_items.iterrows(), start=1):
+        don_gia_str = str(row["Đơn giá (VNĐ)"]).replace(",", "")
+        if not don_gia_str.isdigit():
+            continue
+        don_gia_raw = int(don_gia_str)
+        so_luong    = row["Số lượng"]
+        dvt         = row["Đơn vị tính"] if "Đơn vị tính" in row.index else ""
+        thanh_tien_goc = int(str(row["Thành tiền (VNĐ)"]).replace(",", ""))
         if show_tax_note:
-            don_gia_goc = round(don_gia_raw / TAX_FOOD)
-            thanh_tien  = so_luong * don_gia_goc
+            don_gia_hien   = round(don_gia_raw / TAX_FOOD)
+            thanh_tien_hien = round(float(str(so_luong)) * don_gia_hien)
         else:
-            don_gia_goc = don_gia_raw
-            thanh_tien  = int(str(row["Thành tiền (VNĐ)"]).replace(",", ""))
+            don_gia_hien    = don_gia_raw
+            thanh_tien_hien = thanh_tien_goc
         display_rows.append({
-            "STT":          idx + 1,
+            "STT":          str(stt),
             "Tên hàng hóa": row["Tên món"],
-            "ĐVT":          row.get("Đơn vị tính", ""),
-            "Số lượng":     so_luong,
-            "Đơn giá":      f"{don_gia_goc:,}",
-            "Thành tiền":   f"{thanh_tien:,}",
+            "ĐVT":          str(dvt),
+            "Số lượng":     str(so_luong),
+            "Đơn giá":      f"{don_gia_hien:,}",
+            "Thành tiền":   f"{thanh_tien_hien:,}",
         })
 
     df_display = pd.DataFrame(display_rows)
-    footer_row = pd.DataFrame([{
-        "STT": "", "Tên hàng hóa": "", "ĐVT": "", "Số lượng": None,
-        "Đơn giá": "Tổng tiền thanh toán:",
-        "Thành tiền": f"{total_raw:,}",
-    }])
-    df_display = pd.concat([df_display, footer_row], ignore_index=True)
+
+    if show_tax_note:
+        thanh_tien_truoc = sum(
+            int(str(r["Thành tiền"]).replace(",", ""))
+            for r in display_rows
+        )
+        giam_tru    = round(thanh_tien_truoc * 0.006)
+        tong_tt     = thanh_tien_truoc - giam_tru
+        footer_rows = pd.DataFrame([
+            {"STT": "", "Tên hàng hóa": "", "ĐVT": "", "Số lượng": "",
+             "Đơn giá": "Thành tiền:",          "Thành tiền": f"{thanh_tien_truoc:,}"},
+            {"STT": "", "Tên hàng hóa": "", "ĐVT": "", "Số lượng": "",
+             "Đơn giá": "Thuế giảm trừ (0.6%):", "Thành tiền": f"-{giam_tru:,}"},
+            {"STT": "", "Tên hàng hóa": "", "ĐVT": "", "Số lượng": "",
+             "Đơn giá": "Tổng tiền thanh toán:", "Thành tiền": f"{tong_tt:,}"},
+        ])
+        return_total = tong_tt
+    else:
+        tong_tt  = sum(
+            int(str(r["Thành tiền"]).replace(",", ""))
+            for r in display_rows
+        )
+        footer_rows = pd.DataFrame([
+            {"STT": "", "Tên hàng hóa": "", "ĐVT": "", "Số lượng": "",
+             "Đơn giá": "Tổng tiền thanh toán:", "Thành tiền": f"{tong_tt:,}"},
+        ])
+        return_total = tong_tt
+
+    df_display = pd.concat([df_display, footer_rows], ignore_index=True)
 
     def style_footer(row):
-        if row["Đơn giá"] == "Tổng tiền thanh toán:":
+        if row["Đơn giá"] in ("Tổng tiền thanh toán:", "Thành tiền:", "Thuế giảm trừ (0.6%):"):
             return ["font-weight: bold"] * len(row)
         return [""] * len(row)
 
     st.dataframe(
         df_display.style.apply(style_footer, axis=1),
-        width="stretch",
+        use_container_width=True,
         hide_index=True,
     )
 
     if show_tax_note:
-        giam_tru = round(total_raw * 0.006)
         st.caption(
             f"Đã giảm **{giam_tru:,} đồng** tương ứng 20% mức tỷ lệ % để tính thuế GTGT "
             f"theo Nghị quyết số 204/2025/QH15."
         )
 
-    return total_raw
+    return return_total
 
 
 def main():
@@ -311,7 +338,7 @@ def main():
         MON_LIST = [
             "", "BIVINA EXPORT LON", "KEN BẠC LON 250ML", "KEN BẠC LON 330ML",
             "KEN BẠC CHAI", "TIGER BẠC LON", "TIGER BẠC LON 250ML", "SÀI GÒN TRẮNG",
-            "NƯỚC NGỌT", "NƯỚC SUỐI", "GÀ TA 2 MÓN", "GÀ KHO SẢ GỪNG", "KHOAI TÂY CHIÊN",
+            "NƯỚC NGỌT", "NƯỚC SUỐI", "GÀ TA 2 MÓN", "GÀ KHO SẢ GỪNG", "KHOAI TÂY CHIÊN", "CÁ CHÉP NẤU RIÊU",
         ]
         mon_bb_1 = st.selectbox("Món bắt buộc 1", MON_LIST, index=0)
         mon_bb_2 = st.selectbox("Món bắt buộc 2", MON_LIST, index=0)
