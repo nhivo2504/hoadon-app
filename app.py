@@ -56,6 +56,10 @@ def solve(df, target, cfg):
         i for i in df[df["Danh mục sản phẩm"] == BEER_CATEGORY].index.tolist()
         if df.loc[i, "Tên sản phẩm"] in [s.upper() for s in SOFT_DRINK_NAMES]
     ]
+    water_idx = [
+        i for i in df[df["Danh mục sản phẩm"] == STARTER_CATEGORY].index.tolist()
+        if df.loc[i, "Tên sản phẩm"] == "NƯỚC SUỐI"
+    ]
     starter_idx = [
         i for i in df[df["Danh mục sản phẩm"] == STARTER_CATEGORY].index.tolist()
         if df.loc[i, "Tên sản phẩm"] not in ["KHĂN LẠNH", "BÁNH TRÁNG MÈ", "NƯỚC SUỐI"]
@@ -75,7 +79,7 @@ def solve(df, target, cfg):
             qty   = [model.new_int_var(0, MAX_QTY, f"q_{i}") for i in range(n_items)]
 
             total_expr = sum(qty[i] * prices[i] for i in range(n_items))
-            over = model.new_int_var(0, 3000, "over")
+            over = model.new_int_var(0, 1000, "over")
             model.add(total_expr == target_k + over)
 
             beer_totals = {}
@@ -91,8 +95,8 @@ def solve(df, target, cfg):
                 if beer_idx.get("KEN BẠC LON 330ML"):
                     model.add(qty[beer_idx["KEN BẠC LON 330ML"][0]] == cfg["ken330_fixed_qty"])
             else:
-                if cfg["ken330_min"] is not None:
-                    model.add(ken330_total * 100 > int(cfg["ken330_min"] * 100) * total_beer)
+                if cfg["ken330_min"] is not None and cfg["ken330_min"] > 0:
+                    model.add(ken330_total * 100 >= int(cfg["ken330_min"] * 100) * total_beer)
 
             if force_no_div5:
                 for bname, bidx in beer_idx.items():
@@ -113,7 +117,7 @@ def solve(df, target, cfg):
                 soft_total = sum(qty[i] * prices[i] for i in soft_idx)
                 model.add(soft_total <= int(cfg["soft_max"] * target_k))
 
-            if khan_idx:
+            if khan_idx and cfg["require_food"]:
                 model.add(qty[khan_idx[0]] >= N)
                 model.add(qty[khan_idx[0]] <= N + 2)
 
@@ -148,13 +152,36 @@ def solve(df, target, cfg):
             # Ràng buộc món bắt buộc
             for fname in cfg.get("forced_items", []):
                 fidx = idx_of(fname)
-                if fidx:
-                    model.add(qty[fidx[0]] >= 1)
+                if not fidx:
+                    continue
+                fi = fidx[0]
+                fname_upper = fname.upper()
+                is_beer_item = any(fname_upper == b for b in BEER_NAMES)
+                if is_beer_item:
+                    model.add(qty[fi] >= 5)   # bia tối thiểu 5 lon
+                elif df.loc[fi, "is_kg"]:
+                    model.add(qty[fi] >= 8)   # kg tối thiểu 0.8kg
+                else:
+                    model.add(qty[fi] >= 1)
 
-            allowed = (
-                [bidx[0] for bidx in beer_idx.values() if bidx]
-                + soft_idx + khan_idx + btm_idx + starter_idx + main_idx
-            )
+            if cfg["require_food"]:
+                allowed = (
+                    [bidx[0] for bidx in beer_idx.values() if bidx]
+                    + soft_idx + khan_idx + btm_idx + starter_idx + main_idx + water_idx
+                )
+            else:
+                allowed = (
+                    [bidx[0] for bidx in beer_idx.values() if bidx]
+                    + soft_idx
+                )
+            # Món Kg: tối thiểu 0.8 kg nếu được dùng
+            for i in range(n_items):
+                if df.loc[i, "is_kg"] and i in allowed:
+                    is_used_kg = model.new_bool_var(f"kg_used_{i}")
+                    model.add(qty[i] >= 1).only_enforce_if(is_used_kg)
+                    model.add(qty[i] == 0).only_enforce_if(is_used_kg.Not())
+                    model.add(qty[i] >= 8).only_enforce_if(is_used_kg)  # 0.8 kg min
+
             for i in range(n_items):
                 if i not in allowed:
                     model.add(qty[i] == 0)
@@ -316,6 +343,174 @@ def render_invoice_table(df_items, show_tax_note=False):
     return return_total
 
 
+
+def df_to_editable(df_rows: "pd.DataFrame") -> "pd.DataFrame":
+    rows = []
+    for _, row in df_rows.iterrows():
+        if row["Tên món"] == "TỔNG CỘNG":
+            continue
+        don_gia_str = str(row["Đơn giá (VNĐ)"]).replace(",", "")
+        if not don_gia_str.isdigit():
+            continue
+        rows.append({
+            "Tên món": row["Tên món"],
+            "Đơn vị tính": row.get("Đơn vị tính", ""),
+            "Số lượng": float(row["Số lượng"]),
+            "don_gia_eff": int(don_gia_str),
+            "is_food": row["Thuế"] != "Giữ nguyên",
+        })
+    return pd.DataFrame(rows)
+
+
+def on_edit_change(key: str):
+    edited = st.session_state[key]
+    df_key = key.replace("_editor", "")
+    df = st.session_state[df_key].copy()
+    for idx_str, changes in edited.get("edited_rows", {}).items():
+        idx = int(idx_str)
+        for col, val in changes.items():
+            df.at[idx, col] = val
+    st.session_state[df_key] = df
+
+
+def recalc_and_render(edit_df: "pd.DataFrame", is_food: bool) -> int:
+    if edit_df.empty:
+        st.info("Không có món nào.")
+        return 0
+    display_rows = []
+    for stt, row in edit_df.iterrows():
+        sl = float(row["Số lượng"])
+        don_gia_eff = int(row["don_gia_eff"])
+        is_kg = str(row["Đơn vị tính"]).strip() == "Kg"
+        sl_str = f"{sl:.1f}" if is_kg else str(int(sl))
+        if is_food:
+            don_gia_hien = round(don_gia_eff / TAX_FOOD)
+            thanh_tien_hien = round(sl * don_gia_hien)
+        else:
+            don_gia_hien = don_gia_eff
+            thanh_tien_hien = round(sl * don_gia_hien)
+        display_rows.append({
+            "STT": str(stt + 1),
+            "Tên hàng hóa": row["Tên món"],
+            "ĐVT": row["Đơn vị tính"],
+            "Số lượng": sl_str,
+            "Đơn giá": f"{don_gia_hien:,}",
+            "Thành tiền": f"{thanh_tien_hien:,}",
+            "_tt_raw": thanh_tien_hien,
+        })
+    thanh_tien_truoc = sum(r["_tt_raw"] for r in display_rows)
+    if is_food:
+        giam_tru = round(thanh_tien_truoc * 0.006)
+        tong_tt = thanh_tien_truoc - giam_tru
+        footer_rows = [
+            {"STT": "", "Tên hàng hóa": "", "ĐVT": "", "Số lượng": "",
+             "Đơn giá": "Thành tiền:", "Thành tiền": f"{thanh_tien_truoc:,}", "_tt_raw": 0},
+            {"STT": "", "Tên hàng hóa": "", "ĐVT": "", "Số lượng": "",
+             "Đơn giá": "Thuế giảm trừ (0.6%):", "Thành tiền": f"-{giam_tru:,}", "_tt_raw": 0},
+            {"STT": "", "Tên hàng hóa": "", "ĐVT": "", "Số lượng": "",
+             "Đơn giá": "Tổng tiền thanh toán:", "Thành tiền": f"{tong_tt:,}", "_tt_raw": 0},
+        ]
+        st.caption(f"Đã giảm **{giam_tru:,} đồng** theo NQ 204/2025/QH15.")
+    else:
+        tong_tt = thanh_tien_truoc
+        footer_rows = [
+            {"STT": "", "Tên hàng hóa": "", "ĐVT": "", "Số lượng": "",
+             "Đơn giá": "Tổng tiền thanh toán:", "Thành tiền": f"{tong_tt:,}", "_tt_raw": 0},
+        ]
+    df_show = pd.DataFrame([{k: v for k, v in r.items() if k != "_tt_raw"}
+                             for r in display_rows] + footer_rows)
+    def style_footer(row):
+        if row["Đơn giá"] in ("Tổng tiền thanh toán:", "Thành tiền:", "Thuế giảm trừ (0.6%):"):
+            return ["font-weight: bold"] * len(row)
+        return [""] * len(row)
+    st.dataframe(df_show.style.apply(style_footer, axis=1),
+                 use_container_width=True, hide_index=True)
+    return tong_tt
+
+
+def df_to_editable(df_rows: "pd.DataFrame") -> "pd.DataFrame":
+    rows = []
+    for _, row in df_rows.iterrows():
+        if row["Tên món"] == "TỔNG CỘNG":
+            continue
+        don_gia_str = str(row["Đơn giá (VNĐ)"]).replace(",", "")
+        if not don_gia_str.isdigit():
+            continue
+        rows.append({
+            "Tên món": row["Tên món"],
+            "Đơn vị tính": row.get("Đơn vị tính", ""),
+            "Số lượng": float(row["Số lượng"]),
+            "don_gia_eff": int(don_gia_str),
+            "is_food": row["Thuế"] != "Giữ nguyên",
+        })
+    return pd.DataFrame(rows)
+
+
+def on_edit_change(key: str):
+    edited = st.session_state[key]
+    df_key = key.replace("_editor", "")
+    df = st.session_state[df_key].copy()
+    for idx_str, changes in edited.get("edited_rows", {}).items():
+        idx = int(idx_str)
+        for col, val in changes.items():
+            df.at[idx, col] = val
+    st.session_state[df_key] = df
+
+
+def recalc_and_render(edit_df: "pd.DataFrame", is_food: bool) -> int:
+    if edit_df.empty:
+        st.info("Không có món nào.")
+        return 0
+    display_rows = []
+    for stt, row in edit_df.iterrows():
+        sl = float(row["Số lượng"])
+        don_gia_eff = int(row["don_gia_eff"])
+        is_kg = str(row["Đơn vị tính"]).strip() == "Kg"
+        sl_str = f"{sl:.1f}" if is_kg else str(int(sl))
+        if is_food:
+            don_gia_hien = round(don_gia_eff / TAX_FOOD)
+            thanh_tien_hien = round(sl * don_gia_hien)
+        else:
+            don_gia_hien = don_gia_eff
+            thanh_tien_hien = round(sl * don_gia_hien)
+        display_rows.append({
+            "STT": str(stt + 1),
+            "Tên hàng hóa": row["Tên món"],
+            "ĐVT": row["Đơn vị tính"],
+            "Số lượng": sl_str,
+            "Đơn giá": f"{don_gia_hien:,}",
+            "Thành tiền": f"{thanh_tien_hien:,}",
+            "_tt_raw": thanh_tien_hien,
+        })
+    thanh_tien_truoc = sum(r["_tt_raw"] for r in display_rows)
+    if is_food:
+        giam_tru = round(thanh_tien_truoc * 0.006)
+        tong_tt = thanh_tien_truoc - giam_tru
+        footer_rows = [
+            {"STT": "", "Tên hàng hóa": "", "ĐVT": "", "Số lượng": "",
+             "Đơn giá": "Thành tiền:", "Thành tiền": f"{thanh_tien_truoc:,}", "_tt_raw": 0},
+            {"STT": "", "Tên hàng hóa": "", "ĐVT": "", "Số lượng": "",
+             "Đơn giá": "Thuế giảm trừ (0.6%):", "Thành tiền": f"-{giam_tru:,}", "_tt_raw": 0},
+            {"STT": "", "Tên hàng hóa": "", "ĐVT": "", "Số lượng": "",
+             "Đơn giá": "Tổng tiền thanh toán:", "Thành tiền": f"{tong_tt:,}", "_tt_raw": 0},
+        ]
+        st.caption(f"Đã giảm **{giam_tru:,} đồng** theo NQ 204/2025/QH15.")
+    else:
+        tong_tt = thanh_tien_truoc
+        footer_rows = [
+            {"STT": "", "Tên hàng hóa": "", "ĐVT": "", "Số lượng": "",
+             "Đơn giá": "Tổng tiền thanh toán:", "Thành tiền": f"{tong_tt:,}", "_tt_raw": 0},
+        ]
+    df_show = pd.DataFrame([{k: v for k, v in r.items() if k != "_tt_raw"}
+                             for r in display_rows] + footer_rows)
+    def style_footer(row):
+        if row["Đơn giá"] in ("Tổng tiền thanh toán:", "Thành tiền:", "Thuế giảm trừ (0.6%):"):
+            return ["font-weight: bold"] * len(row)
+        return [""] * len(row)
+    st.dataframe(df_show.style.apply(style_footer, axis=1),
+                 use_container_width=True, hide_index=True)
+    return tong_tt
+
 def main():
     st.set_page_config(page_title="🍺 Tạo Hóa Đơn Nhà Hàng", page_icon="🍺", layout="wide")
     st.title("🍺 Hệ thống Tạo Hóa Đơn Nhà Hàng Tự Động")
@@ -333,6 +528,13 @@ def main():
         )
         if target is None:
             target = 2_151_000
+
+        if target < 700_000:
+            st.warning("⚠️ Target dưới 700,000đ — tự động chuyển sang **Chỉ bia**.")
+            auto_beer_only = True
+        else:
+            auto_beer_only = False
+
         st.markdown("---")
         st.markdown("**🍽️ Món bắt buộc:**")
         MON_LIST = [
@@ -345,12 +547,15 @@ def main():
         forced_items = [m for m in [mon_bb_1, mon_bb_2] if m.strip()]
 
         st.markdown("---")
+        mode_options = ["🍺🥘 Bia + Đồ ăn (mặc định)", "🍺 Chỉ bia", "🔧 Tùy chỉnh hoàn toàn"]
         mode = st.selectbox(
             "📋 Chế độ hóa đơn",
-            ["🍺🥘 Bia + Đồ ăn (mặc định)", "🍺 Chỉ bia", "🔧 Tùy chỉnh hoàn toàn"],
+            mode_options,
+            index=1 if auto_beer_only else 0,
+            disabled=auto_beer_only,
         )
 
-        if mode == "🍺 Chỉ bia":
+        if auto_beer_only or mode == "🍺 Chỉ bia":
             cfg = {
                 "beer_min": 0.90, "beer_max": 0.98, "ken330_min": 0.70,
                 "ken330_fixed_qty": None, "soft_max": 0.10,
@@ -386,6 +591,12 @@ def main():
                 "forced_items": forced_items,
             }
 
+        # Override tùy chỉnh nếu target < 700k
+        if auto_beer_only:
+            cfg["require_food"] = False
+            cfg["beer_min"]     = 0.90
+            cfg["beer_max"]     = 0.98
+
         st.markdown("---")
         st.markdown("""**Ràng buộc:**
 - 🍺 Beer: theo % đã chọn
@@ -393,7 +604,7 @@ def main():
 - 🥤 Nước ngọt: theo % đã chọn
 - 🧻 Khăn lạnh = N khách
 - 🥘 Bánh tráng mè: 1–2% tổng
-- 🥗 2–3 Khai vị, 2–3 Món chính""")
+- 🥗 1–3 Khai vị, 0–3 Món chính""")
 
     import os
     if uploaded is not None:
@@ -439,6 +650,28 @@ def main():
         return
 
     invoice_df, grand_total, N = result
+
+    # Lưu bản gốc solver vào session_state
+    st.session_state["invoice_df_orig"] = invoice_df.copy()
+    _rows_beer_init = invoice_df[
+        (invoice_df["Tên món"] != "TỔNG CỘNG") & (invoice_df["Thuế"] == "Giữ nguyên")
+    ].reset_index(drop=True)
+    _rows_food_init = invoice_df[
+        (invoice_df["Tên món"] != "TỔNG CỘNG") & (invoice_df["Thuế"] != "Giữ nguyên")
+    ].reset_index(drop=True)
+    st.session_state["edit_beer"] = df_to_editable(_rows_beer_init)
+    st.session_state["edit_food"] = df_to_editable(_rows_food_init)
+
+    # Lưu bản gốc solver vào session_state
+    st.session_state["invoice_df_orig"] = invoice_df.copy()
+    _rows_beer_init = invoice_df[
+        (invoice_df["Tên món"] != "TỔNG CỘNG") & (invoice_df["Thuế"] == "Giữ nguyên")
+    ].reset_index(drop=True)
+    _rows_food_init = invoice_df[
+        (invoice_df["Tên món"] != "TỔNG CỘNG") & (invoice_df["Thuế"] != "Giữ nguyên")
+    ].reset_index(drop=True)
+    st.session_state["edit_beer"] = df_to_editable(_rows_beer_init)
+    st.session_state["edit_food"] = df_to_editable(_rows_food_init)
     diff = grand_total - int(target)
     st.success(f"✅ Tổng = **{grand_total:,} VNĐ** | Số khách: **{N}** | Lệch: **+{diff:,} đ**")
 
