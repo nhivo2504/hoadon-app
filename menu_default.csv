@@ -1,66 +1,61 @@
-﻿ID;Tên sản phẩm;Đơn vị tính;Giá bán;Danh mục sản phẩm
-fda6c243-1968-4f84-9d41-738514039cd2;BÁNH TRÁNG MÈ;Cái;17000.000000;KHAI VỊ
-8e04e060-7183-406e-9f78-77028855ecb0;BẮP CÒI HẤP;Phần;55000.000000;KHAI VỊ
-8e5ade59-aeb7-43be-94a4-59479a1e2266;BẮP XÀO HÀNH;Phần;55000.000000;KHAI VỊ
-469f5db0-1725-4eb4-9e1d-44ee635998c9;BIVINA EXPORT LON;Lon;16000.000000;BIA RƯỢU
-29256da9-7ba0-4837-b515-de4ad8fd645c;CÁ CHÉP NẤU RIÊU;Kg;235000.000000;CÁ
-165b8ac0-df6a-46ed-a6ed-37332e8a021d;CẢI XANH XÀO TỎI;Phần;50000.000000;KHAI VỊ
-1fe00739-16e5-46a1-ac60-6685c97643fc;CÁ LÓC CHIÊN XÙ;Kg;235000.000000;CÁ
-ea0f7a48-9def-4174-ad4b-07f5b8f7c693;CÁ LÓC HẤP BẦU;Kg;235000.000000;CÁ
-a164c069-0fed-49a7-b694-7fa656a19c7a;CÁ LÓC HẤP XÌ DẦU;Kg;235000.000000;CÁ
-682567e3-2000-48ae-8626-afa8fe7b0944;CÁ LÓC UM CHUỐI;Kg;235000.000000;CÁ
-8c054084-b936-4f3c-896c-eadc7fc01688;CANH CHAY;Phần;75000.000000;THỰC ĐƠN CƠM
-638bdbda-ae31-4f52-b200-5af69d9220c0;CANH CHUA BÔNG LÂU;Phần;120000.000000;THỰC ĐƠN CƠM
-4671d2c4-41be-444a-8492-1418d9a8e4be;CANH CHUA CÁ CHỐT;Phần;155000.000000;THỰC ĐƠN CƠM
-a129f8c9-c057-4b3a-bf7e-f9d5b6500faf;CANH CHUA CÁ LÓC;Phần;220000.000000;THỰC ĐƠN CƠM
-3016e249-d3ec-419b-8593-930ac5827f8c;CANH CHUA CHAY;Phần;75000.000000;THỰC ĐƠN CƠM
-fd91d306-9065-4ce6-b668-6b39020796d5;CANH CHUA THỊT BẰM;Phần;75000.000000;THỰC ĐƠN CƠM
-96aa1cae-26fa-4df7-aae9-870afacb6eee;CÁNH GÀ CHIÊN MẮM;Phần;90000.000000;GÀ
-4b0c0fe5-a568-454a-8480-aac06cbeb9c4;CÁNH GÀ NƯỚNG MUỐI ỚT;Phần;90000.000000;GÀ
-29d1d912-3fe8-4210-94ad-62b110cea8a0;CANH KHỔ QUA BỒ CÂU;Phần;110000.000000;BỒ CÂU
-13a1627e-93c8-449f-a59a-50dcae4314d9;CANH KHỔ QUA NHỒI THỊT;Phần;130000.000000;THỰC ĐƠN CƠM
-94c37790-7e5c-4808-8e22-6bcf2fddf626;CANH KHỔ QUA THÁC LÁC;Phần;120000.000000;THỰC ĐƠN CƠM
-b7e1fc47-caa5-413a-b05d-e09caa139375;CANH MƯỚP NẤU LÒNG GÀ;Phần;75000.000000;THỰC ĐƠN CƠM
-51465018-0328-4b29-b407-9d1bdd23d060;CANH RAU CẢI XANH;Phần;75000.000000;THỰC ĐƠN CƠM
-76439509-dfe4-4fea-bddd-aa8aa430a687;CANH RAU CHẢ CÁ;phần;150000.000000;THỰC ĐƠN CƠM
-65fe7384-98be-4d50-b1c3-2a5e7106af94;CANH RAU CUA;Phần;110000.000000;THỰC ĐƠN CƠM
-9d60ac5a-c4d0-4b68-9876-fca4df4d0aa3;CANH RIÊU CUA;Phần;120000.000000;THỰC ĐƠN CƠM
-ba4b1fb0-54d1-4009-916d-9e119a49adc0;CANH RIÊU CUA TẬP TÀN;Phần;120000.000000;THỰC ĐƠN CƠM
-58fef0ee-305a-4555-9376-a7423aa6d060;CÀ TÍM MỠ HÀNH;Phần;55000.000000;KHAI VỊ
-c002e8cb-66bb-4ac0-8b64-ed1ce7dbcb37;CHẢ CÁ THÁC LÁC CHIÊN ĐẦU HÀNH;Phần;135000.000000;KHAI VỊ
-1f184c6f-5690-4bbe-b311-cae570799321;CHÁO CÁ LÓC PHI LÊ NGUYÊN CON;Kg;235000.000000;CHÁO
-c9797e11-ad34-4960-a3b6-39ca98a0a9c3;CHÁO LƯƠN ĐẬU XANH;Phần;125000.000000;CHÁO
-2fdda970-7963-468c-9e3f-e28b223897c4;CƠM CHIÊN MUỐI É;Phần;60000.000000;CƠM
-22ce1e11-30ac-43fc-bb75-c1e209d764ee;CƠM CHIÊN MUỐI ỚT;Phần;60000.000000;CƠM
-68e134f0-bb7d-428f-a0f9-ea5f104d5471;CƠM CHIÊN TRỨNG;Phần;65000.000000;CƠM
-7c1f87a8-a784-41d8-a7bc-b880a99e1bbc;ĐẬU HỦ CHIÊN/HẤP;Phần;55000.000000;KHAI VỊ
-df392aae-a83f-44bf-b346-43ae638ee329;ĐẬU HỦ TRỨNG;Phần;65000.000000;KHAI VỊ
-43f75ea9-b393-4ffa-b7bf-a71144360ce8;ẾCH CHIÊN MẮM;Phần;135000.000000;ẾCH
-a6a21979-edf1-4eb1-9628-60817ea2583d;GÀ KHO SẢ GỪNG;Nửa Con;220000.000000;GÀ
-85b99792-4eb3-4801-8fee-3a893f1197db;GÀ NÒI ÁP CHẢO;Kg;320000.000000;GÀ
-83d8e9f0-1b67-4560-8280-f08685d8b3ca;GÀ NÒI (CON);Nửa Con;650000.000000;GÀ
-a1045b0d-1afa-43fe-a30f-429aaef7c45a;GÀ NÒI HẦM ĐU ĐỦ;Kg;320000.000000;GÀ
-d28bc291-de2c-4aa4-8740-c4e1cbf9f6cd;GÀ NÒI HẦM SẢ;Kg;320000.000000;GÀ
-df2827ac-7095-401a-95a3-cfab8bf3fc42;GÀ NÒI HẤP GIẢ CẦY;Kg;320000.000000;GÀ
-9431b784-3e2b-4f84-b7c0-777fd7da4d3d;GÀ NÒI NẤU GIẢ CẦY;Kg;320000.000000;GÀ
-89d72c23-e950-47b1-8215-ce3933d23e09;GÀ TA 2 MÓN;Con;440000.000000;GÀ
-9716d217-c49e-4ef5-816d-d68c33624093;KEN BẠC CHAI;Chai;23000.000000;BIA RƯỢU
-64883d95-2ecd-413a-88f0-aa94ec5b020a;KEN BẠC LON 250ML;Lon;22000.000000;BIA RƯỢU
-c2a9c300-fab2-405c-b0aa-ff21b16b4fbb;KEN BẠC LON 330ML;Lon;27000.000000;BIA RƯỢU
-ddae6483-e009-47bb-b781-cf2f900fa25f;KEN HÀ LAN;Chai;31500.000000;BIA RƯỢU
-4cc1e723-cde3-46ef-9c5e-975f89e4bcb7;KHĂN LẠNH;Cái;2000.000000;KHAI VỊ
-a35c05ba-fd1b-47d2-8234-aa543c8b9620;KHOAI TÂY CHIÊN;Phần;55000.000000;THỰC ĐƠN CƠM
-a67714e4-f53a-46c0-b89e-1f5761d316a2;LAGHIM 2 TRỨNG;Cái;75000.000000;KHAI VỊ
-3c21c413-d2d3-4304-b4db-3c23bbea4471;LAGIM 2 TRỨNG;Phần;75000.000000;KHAI VỊ
-ce354b53-9bbd-4f46-bc85-153c9dcf6bbf;LẨU BỒ CÂU KHỔ QUA;Phần;270000.000000;Lẩu
-79f74174-355b-4da6-abd8-3d734cf4545b;LẨU CUA ĐỒNG;Phần;230000.000000;Lẩu
-53f22a69-4630-4a39-a35d-6e2595cc800c;LƯƠN CHIÊN GIÒN MẮM ME;Phần;160000.000000;Lươn
-785bc54a-2f83-4d26-8174-a18af79c0dfc;LƯƠN UM CHUỐI;Phần;200000.000000;Lươn
-2c5e84bd-7a97-471d-9f71-f65a83bc2fbc;MỰC CƠM NƯỚNG MUỐI ỚT;Phần;160000.000000;Mực
-be6e7144-71d8-4539-8354-c6f52d137f79;NƯỚC NGỌT;Lon;16000.000000;BIA RƯỢU
-d31e524a-6d63-4007-8bda-60afa9629d94;NƯỚC SUỐI;Chai;10000.000000;KHAI VỊ
-ffb3e34e-a8d0-428c-a364-f792c201f5dd;SÀI GÒN TRẮNG;Lon;16000.000000;BIA RƯỢU
-b83fd017-46d4-4f12-840d-3c340cd93ac1;TIGER BẠC LON;Lon;23000.000000;BIA RƯỢU
-335fd12d-8a40-4124-8bd0-c824f33db7ac;TIGER BẠC LON 250ML;Lon;20000.000000;BIA RƯỢU
-885d9b1c-3bc3-490b-97c8-5bbb3a2c131a;TIGER LON 33D;Lon;23000.000000;BIA RƯỢU
-b0432f14-71ec-422e-9cb4-d3bf7f32b1ea;TÔM ĐẤT XÀO GIÁ HẸ;Phần;130000.000000;KHAI VỊ
+﻿ID;Tên sản phẩm;Tên tiếng Anh;Hình ảnh;Mã sản phẩm;Mã vạch;Đơn vị tính;Thuế bán hàng;Giá vốn;Giá bán;Trạng thái;Mô tả;Mô tả (ENG);Danh mục sản phẩm;Loại sản phẩm
+fda6c243-1968-4f84-9d41-738514039cd2;BÁNH TRÁNG MÈ;;;;;Cái;Không chịu thuế GTGT bán hàng;0.000000;17000.000000;1;;;KHAI VỊ;Lưu kho
+8e04e060-7183-406e-9f78-77028855ecb0;BẮP CÒI HẤP;;;;;Phần;Không chịu thuế GTGT bán hàng;0.000000;55000.000000;1;;;KHAI VỊ;Dịch vụ
+8e5ade59-aeb7-43be-94a4-59479a1e2266;BẮP XÀO HÀNH;;;;;Phần;Không chịu thuế GTGT bán hàng;0.000000;55000.000000;1;;;KHAI VỊ;Dịch vụ
+469f5db0-1725-4eb4-9e1d-44ee635998c9;BIVINA EXPORT LON;;;;;Lon;Không chịu thuế GTGT bán hàng;0.000000;16000.000000;1;;;BIA RƯỢU;Lưu kho
+29256da9-7ba0-4837-b515-de4ad8fd645c;CÁ CHÉP NẤU RIÊU;;;;;Kg;Không chịu thuế GTGT bán hàng;0.000000;235000.000000;1;;;CÁ;Dịch vụ
+165b8ac0-df6a-46ed-a6ed-37332e8a021d;CẢI XANH XÀO TỎI;;;;;Phần;Không chịu thuế GTGT bán hàng;0.000000;50000.000000;1;;;KHAI VỊ;Dịch vụ
+1fe00739-16e5-46a1-ac60-6685c97643fc;CÁ LÓC CHIÊN XÙ;;;;;Kg;Không chịu thuế GTGT bán hàng;0.000000;235000.000000;1;;;CÁ;Dịch vụ
+ea0f7a48-9def-4174-ad4b-07f5b8f7c693;CÁ LÓC HẤP BẦU;;;;;Kg;Không chịu thuế GTGT bán hàng;0.000000;235000.000000;1;;;CÁ;Dịch vụ
+a164c069-0fed-49a7-b694-7fa656a19c7a;CÁ LÓC HẤP XÌ DẦU;;;;;Kg;Không chịu thuế GTGT bán hàng;0.000000;235000.000000;1;;;CÁ;Dịch vụ
+682567e3-2000-48ae-8626-afa8fe7b0944;CÁ LÓC UM CHUỐI;;;;;Kg;Không chịu thuế GTGT bán hàng;0.000000;235000.000000;1;;;CÁ;Dịch vụ
+8c054084-b936-4f3c-896c-eadc7fc01688;CANH CHAY;;;;;Phần;Không chịu thuế GTGT bán hàng;0.000000;75000.000000;1;;;THỰC ĐƠN CƠM;Dịch vụ
+638bdbda-ae31-4f52-b200-5af69d9220c0;CANH CHUA BÔNG LÂU;;;;;Phần;Không chịu thuế GTGT bán hàng;0.000000;120000.000000;1;;;THỰC ĐƠN CƠM;Dịch vụ
+4671d2c4-41be-444a-8492-1418d9a8e4be;CANH CHUA CÁ CHỐT;;;;;Phần;Không chịu thuế GTGT bán hàng;0.000000;155000.000000;1;;;THỰC ĐƠN CƠM;Dịch vụ
+a129f8c9-c057-4b3a-bf7e-f9d5b6500faf;CANH CHUA CÁ LÓC;;;;;Phần;Không chịu thuế GTGT bán hàng;0.000000;220000.000000;1;;;THỰC ĐƠN CƠM;Dịch vụ
+3016e249-d3ec-419b-8593-930ac5827f8c;CANH CHUA CHAY;;;;;Phần;Không chịu thuế GTGT bán hàng;0.000000;75000.000000;1;;;THỰC ĐƠN CƠM;Dịch vụ
+fd91d306-9065-4ce6-b668-6b39020796d5;CANH CHUA THỊT BẰM;;;;;Phần;Không chịu thuế GTGT bán hàng;0.000000;75000.000000;1;;;THỰC ĐƠN CƠM;Dịch vụ
+4b0c0fe5-a568-454a-8480-aac06cbeb9c4;CÁNH GÀ NƯỚNG MUỐI ỚT;;;;;Phần;Không chịu thuế GTGT bán hàng;0.000000;90000.000000;1;;;GÀ;Dịch vụ
+29d1d912-3fe8-4210-94ad-62b110cea8a0;CANH KHỔ QUA BỒ CÂU;;;;;Phần;Không chịu thuế GTGT bán hàng;0.000000;110000.000000;1;;;BỒ CÂU;Dịch vụ
+13a1627e-93c8-449f-a59a-50dcae4314d9;CANH KHỔ QUA NHỒI THỊT;;;;;Phần;Không chịu thuế GTGT bán hàng;0.000000;130000.000000;1;;;THỰC ĐƠN CƠM;Dịch vụ
+94c37790-7e5c-4808-8e22-6bcf2fddf626;CANH KHỔ QUA THÁC LÁC;;;;;Phần;Không chịu thuế GTGT bán hàng;0.000000;120000.000000;1;;;THỰC ĐƠN CƠM;Dịch vụ
+51465018-0328-4b29-b407-9d1bdd23d060;CANH RAU CẢI XANH;;;;;Phần;Không chịu thuế GTGT bán hàng;0.000000;75000.000000;1;;;THỰC ĐƠN CƠM;Dịch vụ
+76439509-dfe4-4fea-bddd-aa8aa430a687;CANH RAU CHẢ CÁ;;;;;phần;Không chịu thuế GTGT bán hàng;0.000000;150000.000000;1;;;THỰC ĐƠN CƠM;Dịch vụ
+65fe7384-98be-4d50-b1c3-2a5e7106af94;CANH RAU CUA;;;;;Phần;Không chịu thuế GTGT bán hàng;0.000000;110000.000000;1;;;THỰC ĐƠN CƠM;Dịch vụ
+9d60ac5a-c4d0-4b68-9876-fca4df4d0aa3;CANH RIÊU CUA;;;;;Phần;Không chịu thuế GTGT bán hàng;0.000000;120000.000000;1;;;THỰC ĐƠN CƠM;Dịch vụ
+ba4b1fb0-54d1-4009-916d-9e119a49adc0;CANH RIÊU CUA TẬP TÀN;;;;;Phần;Không chịu thuế GTGT bán hàng;0.000000;120000.000000;1;;;THỰC ĐƠN CƠM;Dịch vụ
+58fef0ee-305a-4555-9376-a7423aa6d060;CÀ TÍM MỠ HÀNH;;;;;Phần;Không chịu thuế GTGT bán hàng;0.000000;55000.000000;1;;;KHAI VỊ;Dịch vụ
+c002e8cb-66bb-4ac0-8b64-ed1ce7dbcb37;CHẢ CÁ THÁC LÁC CHIÊN ĐẦU HÀNH;;;;;Phần;Không chịu thuế GTGT bán hàng;0.000000;135000.000000;1;;;KHAI VỊ;Dịch vụ
+1f184c6f-5690-4bbe-b311-cae570799321;CHÁO CÁ LÓC PHI LÊ NGUYÊN CON;;;;;Kg;Không chịu thuế GTGT bán hàng;0.000000;235000.000000;1;;;CHÁO;Dịch vụ
+c9797e11-ad34-4960-a3b6-39ca98a0a9c3;CHÁO LƯƠN ĐẬU XANH;;;;;Phần;Không chịu thuế GTGT bán hàng;0.000000;125000.000000;1;;;CHÁO;Dịch vụ
+2fdda970-7963-468c-9e3f-e28b223897c4;CƠM CHIÊN MUỐI É;;;;;Phần;Không chịu thuế GTGT bán hàng;0.000000;60000.000000;1;;;CƠM;Dịch vụ
+22ce1e11-30ac-43fc-bb75-c1e209d764ee;CƠM CHIÊN MUỐI ỚT;;;;;Phần;Không chịu thuế GTGT bán hàng;0.000000;60000.000000;1;;;CƠM;Dịch vụ
+68e134f0-bb7d-428f-a0f9-ea5f104d5471;CƠM CHIÊN TRỨNG;;;;;Phần;Không chịu thuế GTGT bán hàng;0.000000;65000.000000;1;;;CƠM;Dịch vụ
+7c1f87a8-a784-41d8-a7bc-b880a99e1bbc;ĐẬU HỦ CHIÊN/HẤP;;;;;Phần;Không chịu thuế GTGT bán hàng;0.000000;55000.000000;1;;;KHAI VỊ;Dịch vụ
+df392aae-a83f-44bf-b346-43ae638ee329;ĐẬU HỦ TRỨNG;;;;;Phần;Không chịu thuế GTGT bán hàng;0.000000;65000.000000;1;;;KHAI VỊ;Dịch vụ
+43f75ea9-b393-4ffa-b7bf-a71144360ce8;ẾCH CHIÊN MẮM;;;;;Phần;Không chịu thuế GTGT bán hàng;0.000000;135000.000000;1;;;ẾCH;Dịch vụ
+a6a21979-edf1-4eb1-9628-60817ea2583d;GÀ KHO SẢ GỪNG;;;;;Nửa Con;Không chịu thuế GTGT bán hàng;0.000000;220000.000000;1;;;GÀ;Chế biến
+83d8e9f0-1b67-4560-8280-f08685d8b3ca;GÀ NÒI (CON);;;;;Nửa Con;Không chịu thuế GTGT bán hàng;0.000000;650000.000000;1;;;GÀ;Dịch vụ
+d28bc291-de2c-4aa4-8740-c4e1cbf9f6cd;GÀ NÒI HẦM SẢ;;;;;Kg;Không chịu thuế GTGT bán hàng;0.000000;320000.000000;1;;;GÀ;Dịch vụ
+89d72c23-e950-47b1-8215-ce3933d23e09;GÀ TA 2 MÓN;;;;;Con;Không chịu thuế GTGT bán hàng;0.000000;440000.000000;1;;;GÀ;Chế biến
+57d6ca04-4912-47e4-a138-4271d2403534;GÀ TA THỊT;;;;;Kg;;0.000000;220000.000000;1;;;GÀ;Lưu kho
+9716d217-c49e-4ef5-816d-d68c33624093;KEN BẠC CHAI;;;;;Chai;Không chịu thuế GTGT bán hàng;0.000000;23000.000000;1;;;BIA RƯỢU;Lưu kho
+64883d95-2ecd-413a-88f0-aa94ec5b020a;KEN BẠC LON 250ML;;;;;Lon;Không chịu thuế GTGT bán hàng;0.000000;22000.000000;1;;;BIA RƯỢU;Lưu kho
+c2a9c300-fab2-405c-b0aa-ff21b16b4fbb;KEN BẠC LON 330ML;;;;;Lon;Không chịu thuế GTGT bán hàng;0.000000;27000.000000;1;;;BIA RƯỢU;Lưu kho
+ddae6483-e009-47bb-b781-cf2f900fa25f;KEN HÀ LAN;;;;;Chai;Không chịu thuế GTGT bán hàng;0.000000;31500.000000;1;;;BIA RƯỢU;Lưu kho
+4cc1e723-cde3-46ef-9c5e-975f89e4bcb7;KHĂN LẠNH;;;;;Cái;Không chịu thuế GTGT bán hàng;0.000000;2000.000000;1;;;KHAI VỊ;Lưu kho
+a35c05ba-fd1b-47d2-8234-aa543c8b9620;KHOAI TÂY CHIÊN;;;;;Phần;Không chịu thuế GTGT bán hàng;0.000000;55000.000000;1;;;THỰC ĐƠN CƠM;Lưu kho
+a67714e4-f53a-46c0-b89e-1f5761d316a2;LAGHIM 2 TRỨNG;;;;;Cái;Không chịu thuế GTGT bán hàng;0.000000;75000.000000;1;;;KHAI VỊ;Dịch vụ
+3c21c413-d2d3-4304-b4db-3c23bbea4471;LAGIM 2 TRỨNG;;;;;Phần;;0.000000;75000.000000;1;;;KHAI VỊ;Dịch vụ
+ce354b53-9bbd-4f46-bc85-153c9dcf6bbf;LẨU BỒ CÂU KHỔ QUA;;;;;Phần;Không chịu thuế GTGT bán hàng;0.000000;270000.000000;1;;;Lẩu;Dịch vụ
+79f74174-355b-4da6-abd8-3d734cf4545b;LẨU CUA ĐỒNG;;;;;Phần;Không chịu thuế GTGT bán hàng;0.000000;230000.000000;1;;;Lẩu;Dịch vụ
+53f22a69-4630-4a39-a35d-6e2595cc800c;LƯƠN CHIÊN GIÒN MẮM ME;;;;;Phần;Không chịu thuế GTGT bán hàng;0.000000;160000.000000;1;;;Lươn;Dịch vụ
+785bc54a-2f83-4d26-8174-a18af79c0dfc;LƯƠN UM CHUỐI;;;;;Phần;Không chịu thuế GTGT bán hàng;0.000000;200000.000000;1;;;Lươn;Dịch vụ
+2c5e84bd-7a97-471d-9f71-f65a83bc2fbc;MỰC CƠM NƯỚNG MUỐI ỚT;;;;;Phần;Không chịu thuế GTGT bán hàng;0.000000;160000.000000;1;;;Mực;Dịch vụ
+be6e7144-71d8-4539-8354-c6f52d137f79;NƯỚC NGỌT;;;;;Lon;Không chịu thuế GTGT bán hàng;0.000000;16000.000000;1;;;BIA RƯỢU;Lưu kho
+d31e524a-6d63-4007-8bda-60afa9629d94;NƯỚC SUỐI;;;;;Chai;Không chịu thuế GTGT bán hàng;0.000000;10000.000000;1;;;KHAI VỊ;Lưu kho
+ffb3e34e-a8d0-428c-a364-f792c201f5dd;SÀI GÒN TRẮNG;;;;;Lon;Không chịu thuế GTGT bán hàng;0.000000;16000.000000;1;;;BIA RƯỢU;Lưu kho
+b83fd017-46d4-4f12-840d-3c340cd93ac1;TIGER BẠC LON;;;;;Lon;Không chịu thuế GTGT bán hàng;0.000000;23000.000000;1;;;BIA RƯỢU;Lưu kho
+335fd12d-8a40-4124-8bd0-c824f33db7ac;TIGER BẠC LON 250ML;;;;;Lon;;0.000000;20000.000000;1;;;BIA RƯỢU;Lưu kho
+815e6b1b-3ed2-4375-8fdf-eed1e8e1f48b;TIGER LON 33D;;;;;Lon;;0.000000;23000.000000;1;;;BIA RƯỢU;Lưu kho
+b0432f14-71ec-422e-9cb4-d3bf7f32b1ea;TÔM ĐẤT XÀO GIÁ HẸ;;;;;Phần;Không chịu thuế GTGT bán hàng;0.000000;130000.000000;1;;;KHAI VỊ;Dịch vụ
