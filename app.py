@@ -41,8 +41,8 @@ def solve(df, target, cfg):
     n_items = len(df)
     prices   = df["solver_price"].tolist()   # ← dùng solver_price thay eff_price
     target_k = target                  # ← nhân 100 để khớp với món Kg
-
-    N_lo         = math.ceil(target / 700_000)
+    N_lo         = max(1, math.floor(target / 700_000))
+    N_hi         = max(N_lo, math.ceil(target / 400_000))
     N_hi         = math.floor(target / 400_000)
     N_candidates = list(range(N_lo, N_hi + 1))
 
@@ -79,8 +79,9 @@ def solve(df, target, cfg):
             qty   = [model.new_int_var(0, MAX_QTY, f"q_{i}") for i in range(n_items)]
 
             total_expr = sum(qty[i] * prices[i] for i in range(n_items))
-            over = model.new_int_var(0, 1000, "over")
+            over = model.new_int_var(0, 30_000, "over")
             model.add(total_expr == target_k + over)
+            model.minimize(over)
 
             beer_totals = {}
             for bname, bidx in beer_idx.items():
@@ -96,22 +97,22 @@ def solve(df, target, cfg):
                     model.add(qty[beer_idx["KEN BẠC LON 330ML"][0]] == cfg["ken330_fixed_qty"])
             else:
                 if cfg["ken330_min"] is not None and cfg["ken330_min"] > 0:
-                    model.add(ken330_total * 100 >= int(cfg["ken330_min"] * 100) * total_beer)
+                    pass  # ken330_min constraint removed
 
-            if force_no_div5:
-                for bname, bidx in beer_idx.items():
-                    if not bidx:
-                        continue
-                    i       = bidx[0]
-                    is_used = model.new_bool_var(f"used_{i}")
-                    model.add(qty[i] >= 1).only_enforce_if(is_used)
-                    model.add(qty[i] == 0).only_enforce_if(is_used.Not())
-                    # Khi dùng: qty[i] mod 5 phải nằm trong {1,2,3,4}
-                    # Tức là qty[i] mod 5 != 0
-                    # Dùng: qty[i] = 5*k + r, r in [1,4]
-                    k = model.new_int_var(0, 40, f"k_{i}")
-                    r = model.new_int_var(1,  4, f"r_{i}")
-                    model.add(qty[i] == 5 * k + r).only_enforce_if(is_used)
+            # [removed no_div5] if force_no_div5:
+            # [removed no_div5] for bname, bidx in beer_idx.items():
+            # [removed no_div5] if not bidx:
+            # [removed no_div5] continue
+            # [removed no_div5] i       = bidx[0]
+            # [removed no_div5] is_used = model.new_bool_var(f"used_{i}")
+            # [removed no_div5] model.add(qty[i] >= 1).only_enforce_if(is_used)
+            # [removed no_div5] model.add(qty[i] == 0).only_enforce_if(is_used.Not())
+            # [removed no_div5] # Khi dùng: qty[i] mod 5 phải nằm trong {1,2,3,4}
+            # [removed no_div5] # Tức là qty[i] mod 5 != 0
+            # [removed no_div5] # Dùng: qty[i] = 5*k + r, r in [1,4]
+            # [removed no_div5] k = model.new_int_var(0, 40, f"k_{i}")
+            # [removed no_div5] r = model.new_int_var(1,  4, f"r_{i}")
+            # [removed no_div5] model.add(qty[i] == 5 * k + r).only_enforce_if(is_used)
 
             if soft_idx:
                 soft_total = sum(qty[i] * prices[i] for i in soft_idx)
@@ -123,8 +124,12 @@ def solve(df, target, cfg):
 
             if cfg["require_food"] and btm_idx:
                 btm_money = qty[btm_idx[0]] * prices[btm_idx[0]]
-                model.add(btm_money >= int(0.01 * target_k))
-                model.add(btm_money <= int(0.02 * target_k))
+                if target < 1000000:
+                    model.add(qty[btm_idx[0]] >= 0)
+                    model.add(qty[btm_idx[0]] <= 1)
+                else:
+                    model.add(qty[btm_idx[0]] >= 1)
+                    model.add(qty[btm_idx[0]] <= 2)
 
             starter_used = []
             for i in starter_idx:
@@ -141,10 +146,16 @@ def solve(df, target, cfg):
                 main_used.append(b)
 
             if cfg["require_food"]:
-                model.add(sum(starter_used) >= 2)
-                model.add(sum(starter_used) <= 3)
-                model.add(sum(main_used) >= 2)
-                model.add(sum(main_used) <= 3)
+                if target < 1000000:
+                    model.add(sum(starter_used) >= 1)
+                    model.add(sum(starter_used) <= 2)
+                    model.add(sum(main_used) >= 1)
+                    model.add(sum(main_used) <= 2)
+                else:
+                    model.add(sum(starter_used) >= 2)
+                    model.add(sum(starter_used) <= 3)
+                    model.add(sum(main_used) >= 2)
+                    model.add(sum(main_used) <= 3)
             else:
                 model.add(sum(starter_used) == 0)
                 model.add(sum(main_used) == 0)
@@ -557,37 +568,31 @@ def main():
 
         if auto_beer_only or mode == "🍺 Chỉ bia":
             cfg = {
-                "beer_min": 0.90, "beer_max": 0.98, "ken330_min": 0.70,
+                "beer_min": 0.90, "beer_max": 0.98, "ken330_min": None,
                 "ken330_fixed_qty": None, "soft_max": 0.10,
-                "require_food": False, "beer_no_div5": True,
+                "require_food": False, "beer_no_div5": False,
                 "forced_items": forced_items,
             }
         elif mode == "🍺🥘 Bia + Đồ ăn (mặc định)":
             cfg = {
-                "beer_min": 0.60, "beer_max": 0.89, "ken330_min": 0.80,
+                "beer_min": 0.60, "beer_max": 0.89, "ken330_min": None,
                 "ken330_fixed_qty": None, "soft_max": 0.07,
-                "require_food": True, "beer_no_div5": True,
+                "require_food": True, "beer_no_div5": False,
                 "forced_items": forced_items,
             }
         else:
             st.markdown("**🔧 Tùy chỉnh chi tiết:**")
             beer_range = st.slider("🍺 Beer % tổng", 0.0, 1.0, (0.60, 0.89), 0.01)
-            ken_mode   = st.radio("🍺 Ken Bạc 330ml", ["Theo % tổng bia", "Cố định số lượng"])
-            if ken_mode == "Cố định số lượng":
-                ken330_qty = st.number_input("Số lon Ken 330ml", 1, 200, 36)
-                ken330_pct = None
-            else:
-                ken330_pct = st.slider("Ken 330ml > X% tổng bia", 0.0, 0.95, 0.80, 0.01)
-                ken330_qty = None
+
             soft_max     = st.slider("🥤 Nước ngọt tối đa %", 0.0, 0.30, 0.07, 0.01)
             require_food = st.toggle("🥘 Bắt buộc có đồ ăn", value=True)
-            beer_no_div5 = st.toggle("🔢 SL bia không chia hết 5", value=True)
+
             cfg = {
                 "beer_min": beer_range[0], "beer_max": beer_range[1],
-                "ken330_min": ken330_pct,
-                "ken330_fixed_qty": ken330_qty if ken_mode == "Cố định số lượng" else None,
+                "ken330_min": None,
+                "ken330_fixed_qty": None,
                 "soft_max": soft_max, "require_food": require_food,
-                "beer_no_div5": beer_no_div5,
+                "beer_no_div5": False,
                 "forced_items": forced_items,
             }
 
@@ -600,11 +605,10 @@ def main():
         st.markdown("---")
         st.markdown("""**Ràng buộc:**
 - 🍺 Beer: theo % đã chọn
-- 🔢 SL bia không chia hết 5 (tự động nới nếu cần)
 - 🥤 Nước ngọt: theo % đã chọn
 - 🧻 Khăn lạnh = N khách
-- 🥘 Bánh tráng mè: 1–2% tổng
-- 🥗 1–3 Khai vị, 0–3 Món chính""")
+- 🥘 Bánh tráng mè: 0–2 cái (tuỳ bill)
+- 🥗 1–3 Khai vị, 1–3 Món chính""")
 
     import os
     if uploaded is not None:
